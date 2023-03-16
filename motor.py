@@ -57,7 +57,6 @@ try:
 	while True:
 		key = getkey()
 		if(key != None):
-			print("Get the key: 0x%02x" %key)
 			if key == keys.UP:
 				forward()
 				print("forward")
@@ -88,6 +87,8 @@ try:
 			if key == 'q':
 				break
 except KeyboardInterrupt:
+	GPIO.cleanup();
 	print("Keyboard Error")
+
 
 GPIO.cleanup();
