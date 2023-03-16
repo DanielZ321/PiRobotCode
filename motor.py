@@ -64,7 +64,7 @@ try:
 			if key == keys.LEFT:
 				left()
 				print("left")
-			if key == 0x1c:
+			if key == 's':
 				stop()
 				print("stop")
 			if key == keys.RIGHT:
