@@ -1,5 +1,7 @@
 import RPi.GPIO as GPIO
+from getkey import getkey, keys
 import time
+
 
 PIN = 18
 PWMA1 = 6 
@@ -49,76 +51,43 @@ def left():
 def right():
 	set_motor(0,0,1,0)
 
-def getkey():
-	if GPIO.input(PIN) == 0:
-		count = 0
-		while GPIO.input(PIN) == 0 and count < 200:  #9ms
-			count += 1
-			time.sleep(0.00006)
+print('Motor Test Start ...')
 
-		count = 0
-		while GPIO.input(PIN) == 1 and count < 80:  #4.5ms
-			count += 1
-			time.sleep(0.00006)
-
-		idx = 0
-		cnt = 0
-		data = [0,0,0,0]
-		for i in range(0,32):
-			count = 0
-			while GPIO.input(PIN) == 0 and count < 15:    #0.56ms
-				count += 1
-				time.sleep(0.00006)
-				
-			count = 0
-			while GPIO.input(PIN) == 1 and count < 40:   #0: 0.56ms
-				count += 1                               #1: 1.69ms
-				time.sleep(0.00006)
-				
-			if count > 8:
-				data[idx] |= 1<<cnt
-			if cnt == 7:
-				cnt = 0
-				idx += 1
-			else:
-				cnt += 1
-		if data[0]+data[1] == 0xFF and data[2]+data[3] == 0xFF:  #check
-			return data[2]
-
-print('IRM Test Start ...')
-stop()
 try:
 	while True:
 		key = getkey()
 		if(key != None):
 			print("Get the key: 0x%02x" %key)
-			if key == 0x18:
+			if key == keys.UP:
 				forward()
 				print("forward")
-			if key == 0x08:
+			if key == keys.LEFT:
 				left()
 				print("left")
 			if key == 0x1c:
 				stop()
 				print("stop")
-			if key == 0x5a:
+			if key == keys.RIGHT:
 				right()
 				print("right")
-			if key == 0x52:
+			if key == keys.DOWN:
 				reverse()		
 				print("reverse")
-			if key == 0x15:
+			if key == 'o':
 				if(PWM + 10 < 101):
 					PWM = PWM + 10
 					p1.ChangeDutyCycle(PWM)
 					p2.ChangeDutyCycle(PWM)
 					print(PWM)
-			if key == 0x07:
+			if key == 'l':
 				if(PWM - 10 > -1):
 					PWM = PWM - 10
 					p1.ChangeDutyCycle(PWM)
 					p2.ChangeDutyCycle(PWM)
 					print(PWM)
+			if key == 'q':
+				break
 except KeyboardInterrupt:
-	GPIO.cleanup();
+	print("Keyboard Error")
 
+GPIO.cleanup();
